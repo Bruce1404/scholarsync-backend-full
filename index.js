@@ -14,7 +14,12 @@ app.use(express.json());
 app.use(cors());
 
 // Initialize database on startup
-initializeDatabase();
+// Initialize database on startup
+initializeDatabase().then(() => {
+  console.log("Database setup completed");
+}).catch(err => {
+  console.log("Database setup had issues, but server continues:", err.message);
+});
 
 // Routes
 app.use("/api/auth", authRoutes);
@@ -42,3 +47,4 @@ app.get("/test-db", async (req, res) => {
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
+
