@@ -1,5 +1,6 @@
 const { Pool } = require('pg');
 
+// Use Render's environment variable
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
   ssl: {
@@ -8,8 +9,14 @@ const pool = new Pool({
 });
 
 // Create tables if they don't exist
-const initializeDatabase = async () => {
+async function initializeDatabase() {
   try {
+    console.log("Attempting to connect to database...");
+    
+    // Test connection first
+    const testResult = await pool.query("SELECT NOW()");
+    console.log("Database connection test successful:", testResult.rows[0].now);
+    
     // Users table
     await pool.query(`
       CREATE TABLE IF NOT EXISTS users (
@@ -31,7 +38,7 @@ const initializeDatabase = async () => {
         isbn VARCHAR(50) UNIQUE NOT NULL,
         category VARCHAR(100),
         available BOOLEAN DEFAULT TRUE,
-        added_by INTEGER REFERENCES users(id),
+        added_by INTEGER,
         added_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
       )
     `);
@@ -51,8 +58,9 @@ const initializeDatabase = async () => {
 
     console.log("Database tables created/verified successfully");
   } catch (error) {
-    console.error("Error creating tables:", error);
+    console.error("Error creating tables:", error.message);
+    console.log("DATABASE_URL exists?", !!process.env.DATABASE_URL);
   }
-};
+}
 
 module.exports = { pool, initializeDatabase };
