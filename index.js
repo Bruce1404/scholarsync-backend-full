@@ -7,11 +7,6 @@ const authRoutes = require("./routes/auth");
 const bookRoutes = require("./routes/books");
 const borrowRoutes = require("./routes/borrow");
 
-// PRODUCTION
-if (process.env.NODE_ENV === 'production') {
-  app.use(express.static('public'));
-}
-
 const app = express();
 const PORT = process.env.PORT || 3004;
 
@@ -44,22 +39,6 @@ app.get("/test-db", async (req, res) => {
   }
 });
 
-// Add a catch-all for debugging
-app.use((req, res) => {
-  res.status(404).json({ 
-    error: "Route not found",
-    requestedUrl: req.url,
-    method: req.method 
-  });
-});
-
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
-  console.log(`Available routes:`);
-  console.log(`  GET  /`);
-  console.log(`  GET  /test-db`);
-  console.log(`  POST /api/auth/register`);
-  console.log(`  POST /api/auth/login`);
-  console.log(`  GET  /api/books`);
-  console.log(`  POST /api/books`);
 });
